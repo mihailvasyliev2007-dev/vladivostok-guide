@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Мой план - Гид по Владивостоку</title>
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
     <link rel="stylesheet" href="css/style.css">
     <style>
@@ -200,28 +200,54 @@
 
     document.getElementById('pushBtn').addEventListener('click', function() {
         console.log('Кнопка нажата!');
+
         if (!('serviceWorker' in navigator)) {
             alert('Service Worker не поддерживается');
             return;
         }
-        navigator.serviceWorker.ready.then(function(reg) {
-            console.log('SW готов!');
-            reg.active.postMessage({
+
+        navigator.serviceWorker.ready
+            .then(function(registration) {
+                console.log('SW готов!', registration);
+                
+                if (!registration.active) {
+                    console.log('SW ещё не активирован, ждём...');
+                    setTimeout(function() {
+                        sendMessage(registration);
+                    }, 1000);
+                    return;
+                }
+                
+                sendMessage(registration);
+            })
+            .catch(function(err) {
+                console.error('Ошибка:', err);
+                alert('Ошибка: ' + err.message);
+            });
+    });
+
+    function sendMessage(registration) {
+        console.log('Отправляем сообщение в SW...');
+        
+        try {
+            registration.active.postMessage({
                 type: 'showNotification',
                 title: 'Гид по Владивостоку',
                 body: 'Пора посетить Золотой мост!',
                 icon: '/icons/icon-192x192.png',
                 url: '/sights.html'
             });
+            console.log('✅ Сообщение отправлено!');
+            
             document.getElementById('pushStatus').textContent = 'Уведомление отправлено!';
             document.getElementById('pushStatus').style.color = 'green';
             setTimeout(function() {
                 document.getElementById('pushStatus').textContent = '';
             }, 3000);
-        }).catch(function(err) {
-            console.error('Ошибка:', err);
-        });
-    });
+        } catch (e) {
+            console.error('❌ Ошибка отправки:', e);
+        }
+    }
 </script>
 
 </body>
