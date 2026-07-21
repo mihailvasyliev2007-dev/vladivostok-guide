@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vladivostok-guide-v3';
+const CACHE_NAME = 'vladivostok-guide-v4';
 const ASSETS = [
     '/',
     '/index.html',
@@ -15,7 +15,10 @@ const ASSETS = [
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
-            .then(cache => cache.addAll(ASSETS))
+            .then(cache => {
+                console.log('Кэширование ресурсов...');
+                return cache.addAll(ASSETS);
+            })
             .then(() => self.skipWaiting())
     );
 });
@@ -34,7 +37,27 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(event.request)
-            .then(cached => cached || fetch(event.request))
+            .then(cached => {
+                if (cached) {
+                    return cached;
+                }
+                return fetch(event.request)
+                    .then(response => {
+                        const clone = response.clone();
+                        caches.open(CACHE_NAME).then(cache => {
+                            if (event.request.url.startsWith('http')) {
+                                cache.put(event.request, clone);
+                            }
+                        });
+                        return response;
+                    })
+                    .catch(() => {
+                        return new Response('Извините, страница недоступна офлайн', {
+                            status: 404,
+                            statusText: 'Not Found'
+                        });
+                    });
+            })
     );
 });
 
@@ -62,7 +85,9 @@ self.addEventListener('push', function(event) {
             icon: icon,
             badge: '/icons/icon-72x72.png',
             vibrate: [200, 100, 200],
-            data: { url: url }
+            data: {
+                url: url
+            }
         })
     );
 });
