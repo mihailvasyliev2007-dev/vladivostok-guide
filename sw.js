@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vladivostok-guide-v4';
+const CACHE_NAME = 'vladivostok-guide-v5';
 const ASSETS = [
     '/',
     '/index.html',
@@ -37,30 +37,29 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(event.request)
-            .then(cached => {
-                if (cached) {
-                    return cached;
-                }
-                return fetch(event.request)
-                    .then(response => {
-                        const clone = response.clone();
-                        caches.open(CACHE_NAME).then(cache => {
-                            if (event.request.url.startsWith('http')) {
-                                cache.put(event.request, clone);
-                            }
-                        });
-                        return response;
-                    })
-                    .catch(() => {
-                        return new Response('Извините, страница недоступна офлайн', {
-                            status: 404,
-                            statusText: 'Not Found'
-                        });
-                    });
-            })
+            .then(cached => cached || fetch(event.request))
     );
 });
 
+// ===== ПРИЁМ СООБЩЕНИЙ ОТ СТРАНИЦЫ =====
+self.addEventListener('message', function(event) {
+    console.log('SW получил сообщение:', event.data);
+
+    if (event.data && event.data.type === 'showNotification') {
+        const data = event.data;
+        self.registration.showNotification(data.title || 'Гид по Владивостоку', {
+            body: data.body || 'Новое уведомление!',
+            icon: data.icon || '/icons/icon-192x192.png',
+            badge: '/icons/icon-72x72.png',
+            vibrate: [200, 100, 200],
+            data: {
+                url: data.url || '/'
+            }
+        });
+    }
+});
+
+// ===== PUSH =====
 self.addEventListener('push', function(event) {
     let title = 'Гид по Владивостоку';
     let body = 'Новое уведомление!';
