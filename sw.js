@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vladivostok-guide-v6';
+const CACHE_NAME = 'vladivostok-guide-v7';
 const ASSETS = [
     '/',
     '/index.html',
@@ -12,7 +12,6 @@ const ASSETS = [
     '/manifest.json'
 ];
 
-// УСТАНОВКА
 self.addEventListener('install', event => {
     console.log('SW: Install');
     event.waitUntil(
@@ -25,7 +24,6 @@ self.addEventListener('install', event => {
     );
 });
 
-// АКТИВАЦИЯ
 self.addEventListener('activate', event => {
     console.log('SW: Activate');
     event.waitUntil(
@@ -41,50 +39,33 @@ self.addEventListener('activate', event => {
     );
 });
 
-// ПЕРЕХВАТ ЗАПРОСОВ
 self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(event.request)
-            .then(cached => {
-                if (cached) {
-                    return cached;
-                }
-                return fetch(event.request)
-                    .then(response => {
-                        const clone = response.clone();
-                        caches.open(CACHE_NAME).then(cache => {
-                            if (event.request.url.startsWith('http')) {
-                                cache.put(event.request, clone);
-                            }
-                        });
-                        return response;
-                    });
-            })
+            .then(cached => cached || fetch(event.request))
     );
 });
 
-// ===== ПРИЁМ СООБЩЕНИЙ ОТ СТРАНИЦЫ =====
+// ===== ЭТОТ КОД У ТЕБЯ ОТСУТСТВОВАЛ! =====
 self.addEventListener('message', function(event) {
     console.log('SW получил сообщение:', event.data);
 
     if (event.data && event.data.type === 'showNotification') {
-        const data = event.data;
-        self.registration.showNotification(data.title || 'Гид по Владивостоку', {
-            body: data.body || 'Новое уведомление!',
-            icon: data.icon || '/icons/icon-192x192.png',
+        self.registration.showNotification(event.data.title || 'Гид по Владивостоку', {
+            body: event.data.body || 'Новое уведомление!',
+            icon: event.data.icon || '/icons/icon-192x192.png',
             badge: '/icons/icon-72x72.png',
             vibrate: [200, 100, 200],
             data: {
-                url: data.url || '/'
+                url: event.data.url || '/'
             }
         });
     }
 });
+// ==========================================
 
-// ===== PUSH-УВЕДОМЛЕНИЯ =====
 self.addEventListener('push', function(event) {
     console.log('SW: Push получен!');
-
     let title = 'Гид по Владивостоку';
     let body = 'Новое уведомление!';
     let icon = '/icons/icon-192x192.png';
@@ -108,14 +89,11 @@ self.addEventListener('push', function(event) {
             icon: icon,
             badge: '/icons/icon-72x72.png',
             vibrate: [200, 100, 200],
-            data: {
-                url: url
-            }
+            data: { url: url }
         })
     );
 });
 
-// ===== КЛИК ПО УВЕДОМЛЕНИЮ =====
 self.addEventListener('notificationclick', function(event) {
     console.log('SW: Клик по уведомлению');
     event.notification.close();
