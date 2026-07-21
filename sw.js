@@ -1,4 +1,4 @@
-const CACHE_NAME = 'vladivostok-guide-v5';
+const CACHE_NAME = 'vladivostok-guide-v6';
 const ASSETS = [
     '/',
     '/index.html',
@@ -12,32 +12,54 @@ const ASSETS = [
     '/manifest.json'
 ];
 
+// УСТАНОВКА
 self.addEventListener('install', event => {
+    console.log('SW: Install');
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
-                console.log('Кэширование ресурсов...');
+                console.log('SW: Кэширование ресурсов...');
                 return cache.addAll(ASSETS);
             })
             .then(() => self.skipWaiting())
     );
 });
 
+// АКТИВАЦИЯ
 self.addEventListener('activate', event => {
+    console.log('SW: Activate');
     event.waitUntil(
         caches.keys().then(keys => {
             return Promise.all(
                 keys.filter(key => key !== CACHE_NAME)
-                    .map(key => caches.delete(key))
+                    .map(key => {
+                        console.log('SW: Удаляем старый кэш:', key);
+                        return caches.delete(key);
+                    })
             );
         })
     );
 });
 
+// ПЕРЕХВАТ ЗАПРОСОВ
 self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(event.request)
-            .then(cached => cached || fetch(event.request))
+            .then(cached => {
+                if (cached) {
+                    return cached;
+                }
+                return fetch(event.request)
+                    .then(response => {
+                        const clone = response.clone();
+                        caches.open(CACHE_NAME).then(cache => {
+                            if (event.request.url.startsWith('http')) {
+                                cache.put(event.request, clone);
+                            }
+                        });
+                        return response;
+                    });
+            })
     );
 });
 
@@ -59,8 +81,10 @@ self.addEventListener('message', function(event) {
     }
 });
 
-// ===== PUSH =====
+// ===== PUSH-УВЕДОМЛЕНИЯ =====
 self.addEventListener('push', function(event) {
+    console.log('SW: Push получен!');
+
     let title = 'Гид по Владивостоку';
     let body = 'Новое уведомление!';
     let icon = '/icons/icon-192x192.png';
@@ -91,7 +115,9 @@ self.addEventListener('push', function(event) {
     );
 });
 
+// ===== КЛИК ПО УВЕДОМЛЕНИЮ =====
 self.addEventListener('notificationclick', function(event) {
+    console.log('SW: Клик по уведомлению');
     event.notification.close();
     const url = event.notification.data?.url || '/';
     event.waitUntil(
