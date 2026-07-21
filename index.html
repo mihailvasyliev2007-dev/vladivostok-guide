@@ -2,33 +2,76 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Гид по Владивостоку</title>
-    <link rel="manifest" href="/manifest.json">
-    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- ПРАВИЛЬНЫЙ ПУТЬ К MANIFEST -->
+    <link rel="manifest" href="/vladivostok-guide/manifest.json">
+    <meta name="theme-color" content="#1a5276">
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="/vladivostok-guide/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/vladivostok-guide/icons/icon-512x512.png">
+    
+    <link rel="stylesheet" href="/vladivostok-guide/css/style.css">
 </head>
 <body>
-    <header><h1>Гид по Владивостоку</h1></header>
-    <nav>
-        <a href="index.html">Главная</a>
-        <a href="sights.html">Достопримечательности</a>
-        <a href="food.html">Где поесть</a>
-        <a href="feedback.html">Отзывы</a>
-        <a href="todo.html">Мой план</a>
-    </nav>
-    <main>
-        <h2>О городе</h2>
-        <img src="images/vladivostok.jpg" alt="Владивосток" style="max-width:100%;">
-        <p>Владивосток — город на Дальнем Востоке России.</p>
-    </main>
-    <footer>© 2026 Гид по Владивостоку</footer>
 
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .then(reg => console.log('✅ SW зарегистрирован!', reg))
-                .catch(err => console.log('❌ Ошибка SW:', err));
-        }
-    </script>
+<header>
+    <h1>Гид по Владивостоку</h1>
+    <p>Добро пожаловать в город у моря!</p>
+</header>
+
+<nav>
+    <a href="/vladivostok-guide/index.html">Главная</a>
+    <a href="/vladivostok-guide/sights.html">Достопримечательности</a>
+    <a href="/vladivostok-guide/food.html">Где поесть</a>
+    <a href="/vladivostok-guide/feedback.html">Отзывы</a>
+    <a href="/vladivostok-guide/todo.html">Мой план</a>
+</nav>
+
+<main>
+    <h2>О городе</h2>
+
+    <img src="/vladivostok-guide/images/vladivostok.jpg" alt="Владивосток" style="max-width:100%; border-radius:8px; margin:15px 0;">
+
+    <p>
+        <b>Владивосток</b> — город на Дальнем Востоке России, 
+        расположенный на побережье Японского моря. 
+        Это крупный порт, культурный и туристический центр, 
+        известный своими сопками, мостами и морепродуктами.
+    </p>
+
+    <h2>Что вас ждёт на сайте</h2>
+    <ul>
+        <li>Список главных достопримечательностей</li>
+        <li>Подборка лучших мест, где можно поесть</li>
+        <li>Отзывы туристов</li>
+        <li>Планировщик дел для поездки</li>
+    </ul>
+</main>
+
+<footer>
+    <p style="margin:0;">© 2026 Гид по Владивостоку. Все права защищены.</p>
+    <p style="margin:5px 0 0 0; font-size:12px; opacity:0.8;">
+        Сделано для туристов и гостей города
+    </p>
+</footer>
+
+<script>
+    // РЕГИСТРАЦИЯ SERVICE WORKER С ПРАВИЛЬНЫМ ПУТЁМ
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/vladivostok-guide/sw.js')
+            .then(reg => {
+                console.log('✅ SW зарегистрирован!', reg);
+            })
+            .catch(err => {
+                console.log('❌ Ошибка SW:', err);
+            });
+    }
+</script>
+
 </body>
 </html>
