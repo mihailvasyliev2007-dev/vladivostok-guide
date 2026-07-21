@@ -8,6 +8,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png">
     
     <link rel="stylesheet" href="css/style.css">
     <style>
@@ -117,6 +118,24 @@
             flex: 1;
             min-width: 150px;
         }
+        #pushBtn {
+            background: #27ae60;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 15px 0;
+        }
+        #pushBtn:hover {
+            background: #2ecc71;
+        }
+        #pushStatus {
+            margin: 10px 0;
+            font-size: 14px;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -138,6 +157,9 @@
     <div class="todo-container">
         <div class="todo-content">
             <h2>Список дел</h2>
+
+            <button id="pushBtn">Получить уведомление</button>
+            <div id="pushStatus"></div>
 
             <div>
                 <input type="text" id="taskInput" placeholder="Что нужно сделать?">
@@ -177,5 +199,65 @@
 </footer>
 
 <script src="js/todo.js"></script>
+<script>
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+        console.log('Push поддерживается');
+    } else {
+        console.log('Push НЕ поддерживается');
+        document.getElementById('pushStatus').textContent = 'Ваш браузер не поддерживает уведомления';
+    }
+
+    document.getElementById('pushBtn').addEventListener('click', function() {
+        if (!('serviceWorker' in navigator)) {
+            alert('Service Worker не поддерживается');
+            return;
+        }
+
+        navigator.serviceWorker.ready
+            .then(function(registration) {
+                if (Notification.permission === 'denied') {
+                    alert('Уведомления запрещены в настройках браузера');
+                    return;
+                }
+
+                if (Notification.permission === 'default') {
+                    Notification.requestPermission().then(function(permission) {
+                        if (permission === 'granted') {
+                            sendTestNotification(registration);
+                        } else {
+                            alert('Вы запретили уведомления');
+                        }
+                    });
+                } else {
+                    sendTestNotification(registration);
+                }
+            })
+            .catch(function(err) {
+                alert('Ошибка: ' + err.message);
+            });
+    });
+
+    function sendTestNotification(registration) {
+        registration.active.postMessage({
+            type: 'showNotification',
+            title: 'Гид по Владивостоку',
+            body: 'Пора посетить Золотой мост!',
+            icon: '/icons/icon-192x192.png',
+            url: '/sights.html'
+        });
+
+        document.getElementById('pushStatus').textContent = 'Уведомление отправлено!';
+        document.getElementById('pushStatus').style.color = 'green';
+
+        setTimeout(function() {
+            document.getElementById('pushStatus').textContent = '';
+        }, 3000);
+    }
+
+    navigator.serviceWorker.addEventListener('message', function(event) {
+        console.log('Сообщение от SW:', event.data);
+    });
+</script>
+
 </body>
 </html>
