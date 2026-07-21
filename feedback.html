@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Отзывы - Гид по Владивостоку</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+    <h1>Гид по Владивостоку</h1>
+    <p>Отзывы туристов</p>
+</header>
+
+<nav>
+    <a href="index.html">Главная</a>
+    <a href="sights.html">Достопримечательности</a>
+    <a href="food.html">Где поесть</a>
+    <a href="feedback.html">Отзывы</a>
+    <a href="todo.html">Мой план</a>
+</nav>
+
+<main>
+    <h2>Оставить отзыв</h2>
+
+    <div id="message"></div>
+
+    <form id="feedbackForm">
+        <div style="margin-bottom:15px;">
+            <label><b>Ваше имя:</b></label><br>
+            <input type="text" id="nameInput" required style="width:100%; max-width:400px; padding:8px; border:1px solid #ddd; border-radius:4px;">
+        </div>
+        <div style="margin-bottom:15px;">
+            <label><b>Ваш отзыв:</b></label><br>
+            <textarea id="messageInput" rows="4" required style="width:100%; max-width:400px; padding:8px; border:1px solid #ddd; border-radius:4px;"></textarea>
+        </div>
+        <button type="submit" style="background:#1a5276; color:white; padding:10px 30px; border:none; border-radius:4px; cursor:pointer;">
+            Отправить
+        </button>
+    </form>
+
+    <hr style="margin:30px 0;">
+
+    <h2>Все отзывы</h2>
+    <div id="feedbackList"></div>
+</main>
+
+<footer>
+    <p style="margin:0;">© 2026 Гид по Владивостоку. Все права защищены.</p>
+    <p style="margin:5px 0 0 0; font-size:12px; opacity:0.8;">
+        Сделано для туристов и гостей города
+    </p>
+</footer>
+
+<script>
+    function loadFeedback() {
+        const saved = localStorage.getItem('feedback');
+        return saved ? JSON.parse(saved) : [];
+    }
+
+    function saveFeedback(feedback) {
+        localStorage.setItem('feedback', JSON.stringify(feedback));
+    }
+
+    function renderFeedback() {
+        const list = document.getElementById('feedbackList');
+        const feedback = loadFeedback();
+
+        if (feedback.length === 0) {
+            list.innerHTML = '<p style="color:#666; font-style:italic;">Пока нет отзывов. Будьте первым!</p>';
+            return;
+        }
+
+        list.innerHTML = feedback.map(item => `
+            <div class="card">
+                <strong>${escapeHtml(item.name)}</strong>
+                <p style="margin:8px 0;">${escapeHtml(item.message)}</p>
+                <small style="color:#888;">${item.date}</small>
+            </div>
+        `).join('');
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const name = document.getElementById('nameInput').value.trim();
+        const message = document.getElementById('messageInput').value.trim();
+
+        if (!name || !message) return;
+
+        const feedback = loadFeedback();
+        feedback.push({
+            name: name,
+            message: message,
+            date: new Date().toLocaleString('ru-RU')
+        });
+
+        saveFeedback(feedback);
+        renderFeedback();
+
+        document.getElementById('nameInput').value = '';
+        document.getElementById('messageInput').value = '';
+
+        const msg = document.getElementById('message');
+        msg.innerHTML = '<p style="color:green; background:#d4edda; padding:10px; border-radius:5px;">Отзыв успешно добавлен!</p>';
+        setTimeout(() => msg.innerHTML = '', 3000);
+    });
+
+    renderFeedback();
+</script>
+
+</body>
+</html>
