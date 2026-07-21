@@ -1,15 +1,15 @@
 const CACHE_NAME = 'v1';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/sights.html',
-  '/food.html',
-  '/feedback.html',
-  '/todo.html',
-  '/css/style.css',
-  '/js/todo.js',
-  '/images/vladivostok.jpg',
-  '/manifest.json'
+  '/vladivostok-guide/',
+  '/vladivostok-guide/index.html',
+  '/vladivostok-guide/sights.html',
+  '/vladivostok-guide/food.html',
+  '/vladivostok-guide/feedback.html',
+  '/vladivostok-guide/todo.html',
+  '/vladivostok-guide/css/style.css',
+  '/vladivostok-guide/js/todo.js',
+  '/vladivostok-guide/images/vladivostok.jpg',
+  '/vladivostok-guide/manifest.json'
 ];
 
 self.addEventListener('install', event => {
@@ -46,8 +46,8 @@ self.addEventListener('message', function(event) {
       event.data.title || 'Гид по Владивостоку',
       {
         body: event.data.body || 'Новое уведомление!',
-        icon: '/icons/icon-192x192.png',
-        badge: '/icons/icon-72x72.png'
+        icon: '/vladivostok-guide/icons/icon-192x192.png',
+        badge: '/vladivostok-guide/icons/icon-72x72.png'
       }
     );
   }
