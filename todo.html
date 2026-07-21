@@ -1,205 +1,7 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Мой план - Гид по Владивостоку</title>
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
-    <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png">
-    
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        .todo-item {
-            background: #f8f9fa;
-            padding: 10px;
-            margin: 8px 0;
-            border-left: 3px solid #f39c12;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .todo-item.done {
-            opacity: 0.6;
-            text-decoration: line-through;
-        }
-        .todo-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            margin: 0;
-        }
-        .delete-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 3px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-            margin-left: auto;
-        }
-        .move-btn {
-            background: #2e86c1;
-            color: white;
-            border: none;
-            padding: 3px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        #taskInput, #dateInput, #prioritySelect {
-            padding: 8px;
-            margin: 5px 0;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-        }
-        #taskInput {
-            width: 200px;
-        }
-        #addBtn {
-            background: #1a5276;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        #addBtn:hover {
-            background: #2e86c1;
-        }
-        .filter-buttons {
-            margin: 15px 0;
-        }
-        .filter-buttons button {
-            margin-right: 5px;
-            padding: 5px 15px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        .filter-buttons button.active {
-            border: 2px solid #1a5276;
-        }
-        .priority-high {
-            background: #e74c3c;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-        }
-        .priority-medium {
-            background: #f39c12;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-        }
-        .priority-low {
-            background: #27ae60;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-        }
-        .todo-image {
-            max-width: 100%;
-            border-radius: 8px;
-            margin: 30px 0 10px 0;
-        }
-        .todo-container {
-            display: flex;
-            flex-direction: column;
-        }
-        .todo-content {
-            flex: 1;
-        }
-        .task-text {
-            flex: 1;
-            min-width: 150px;
-        }
-        #pushBtn {
-            background: #27ae60;
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            margin: 15px 0;
-        }
-        #pushBtn:hover {
-            background: #2ecc71;
-        }
-        #pushStatus {
-            margin: 10px 0;
-            font-size: 14px;
-            color: #666;
-        }
-    </style>
-</head>
-<body>
-
-<header>
-    <h1>Гид по Владивостоку</h1>
-    <p>Мой план поездки</p>
-</header>
-
-<nav>
-    <a href="index.html">Главная</a>
-    <a href="sights.html">Достопримечательности</a>
-    <a href="food.html">Где поесть</a>
-    <a href="feedback.html">Отзывы</a>
-    <a href="todo.html">Мой план</a>
-</nav>
-
-<main>
-    <div class="todo-container">
-        <div class="todo-content">
-            <h2>Список дел</h2>
-
-            <button id="pushBtn">Получить уведомление</button>
-            <div id="pushStatus"></div>
-
-            <div>
-                <input type="text" id="taskInput" placeholder="Что нужно сделать?">
-                <input type="date" id="dateInput">
-                <select id="prioritySelect">
-                    <option value="high">Высокий</option>
-                    <option value="medium" selected>Средний</option>
-                    <option value="low">Низкий</option>
-                </select>
-                <button id="addBtn">Добавить</button>
-            </div>
-
-            <div style="margin: 10px 0;">
-                <button id="deleteSelectedBtn">Удалить выделенные</button>
-                <button id="sortByDateBtn">Сортировать по дате</button>
-            </div>
-
-            <div class="filter-buttons">
-                <button onclick="filterTasks('all')" class="active" id="filterAll">Все</button>
-                <button onclick="filterTasks('high')" id="filterHigh">Высокий</button>
-                <button onclick="filterTasks('medium')" id="filterMedium">Средний</button>
-                <button onclick="filterTasks('low')" id="filterLow">Низкий</button>
-            </div>
-
-            <div id="todoList"></div>
-        </div>
-
-        <img src="images/vladivostok.jpg" alt="Владивосток" class="todo-image">
-    </div>
-</main>
-
-<footer>
-    <p style="margin:0;">© 2026 Гид по Владивостоку. Все права защищены.</p>
-    <p style="margin:5px 0 0 0; font-size:12px; opacity:0.8;">
-        Сделано для туристов и гостей города
-    </p>
-</footer>
-
-<script src="js/todo.js"></script>
 <script>
+    console.log('Скрипт загружен');
+
+    // Проверка поддержки
     if ('serviceWorker' in navigator && 'PushManager' in window) {
         console.log('Push поддерживается');
     } else {
@@ -208,6 +10,8 @@
     }
 
     document.getElementById('pushBtn').addEventListener('click', function() {
+        console.log('Кнопка нажата!');
+
         if (!('serviceWorker' in navigator)) {
             alert('Service Worker не поддерживается');
             return;
@@ -215,6 +19,9 @@
 
         navigator.serviceWorker.ready
             .then(function(registration) {
+                console.log('SW готов!');
+                
+                // Проверяем разрешение
                 if (Notification.permission === 'denied') {
                     alert('Уведомления запрещены в настройках браузера');
                     return;
@@ -222,22 +29,27 @@
 
                 if (Notification.permission === 'default') {
                     Notification.requestPermission().then(function(permission) {
+                        console.log('Разрешение:', permission);
                         if (permission === 'granted') {
-                            sendTestNotification(registration);
+                            sendNotification(registration);
                         } else {
                             alert('Вы запретили уведомления');
                         }
                     });
                 } else {
-                    sendTestNotification(registration);
+                    sendNotification(registration);
                 }
             })
             .catch(function(err) {
+                console.error('Ошибка:', err);
                 alert('Ошибка: ' + err.message);
             });
     });
 
-    function sendTestNotification(registration) {
+    function sendNotification(registration) {
+        console.log('Отправка уведомления...');
+        
+        // Показываем уведомление через Service Worker
         registration.active.postMessage({
             type: 'showNotification',
             title: 'Гид по Владивостоку',
@@ -254,10 +66,8 @@
         }, 3000);
     }
 
+    // Логируем сообщения от SW
     navigator.serviceWorker.addEventListener('message', function(event) {
         console.log('Сообщение от SW:', event.data);
     });
 </script>
-
-</body>
-</html>
