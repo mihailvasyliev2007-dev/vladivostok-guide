@@ -2,143 +2,16 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Мой план - Гид по Владивостоку</title>
-    <meta name="mobile-web-app-capable" content="yes">
+    <title>Мой план</title>
+    <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        .todo-item {
-            background: #f8f9fa;
-            padding: 10px;
-            margin: 8px 0;
-            border-left: 3px solid #f39c12;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .todo-item.done {
-            opacity: 0.6;
-            text-decoration: line-through;
-        }
-        .todo-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            margin: 0;
-        }
-        .delete-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 3px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-            margin-left: auto;
-        }
-        .move-btn {
-            background: #2e86c1;
-            color: white;
-            border: none;
-            padding: 3px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        #taskInput, #dateInput, #prioritySelect {
-            padding: 8px;
-            margin: 5px 0;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-        }
-        #taskInput {
-            width: 200px;
-        }
-        #addBtn {
-            background: #1a5276;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        #addBtn:hover {
-            background: #2e86c1;
-        }
-        .filter-buttons {
-            margin: 15px 0;
-        }
-        .filter-buttons button {
-            margin-right: 5px;
-            padding: 5px 15px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        .filter-buttons button.active {
-            border: 2px solid #1a5276;
-        }
-        .priority-high {
-            background: #e74c3c;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-        }
-        .priority-medium {
-            background: #f39c12;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-        }
-        .priority-low {
-            background: #27ae60;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-        }
-        .todo-image {
-            max-width: 100%;
-            border-radius: 8px;
-            margin: 30px 0 10px 0;
-        }
-        .todo-container {
-            display: flex;
-            flex-direction: column;
-        }
-        .todo-content {
-            flex: 1;
-        }
-        .task-text {
-            flex: 1;
-            min-width: 150px;
-        }
-        #pushBtn {
-            background: #27ae60;
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            margin: 15px 0;
-        }
-        #pushBtn:hover {
-            background: #2ecc71;
-        }
-        #pushStatus {
-            margin: 10px 0;
-            font-size: 14px;
-            color: #666;
-        }
-    </style>
 </head>
 <body>
 
 <header>
-    <h1>Гид по Владивостоку</h1>
-    <p>Мой план поездки</p>
+    <h1>🌊 Гид по Владивостоку</h1>
+    <p>Мой план</p>
 </header>
 
 <nav>
@@ -150,104 +23,61 @@
 </nav>
 
 <main>
-    <div class="todo-container">
-        <div class="todo-content">
-            <h2>Список дел</h2>
+    <h2>📋 Список дел</h2>
 
-            <button id="pushBtn">Получить уведомление</button>
-            <div id="pushStatus"></div>
+    <!-- КНОПКА УВЕДОМЛЕНИЙ -->
+    <button id="pushBtn" style="background:#27ae60; color:white; padding:12px 30px; border:0; border-radius:8px; font-size:16px;">
+        🔔 Получить уведомление
+    </button>
+    <div id="pushStatus" style="margin:10px 0; color:#555;"></div>
 
-            <div>
-                <input type="text" id="taskInput" placeholder="Что нужно сделать?">
-                <input type="date" id="dateInput">
-                <select id="prioritySelect">
-                    <option value="high">Высокий</option>
-                    <option value="medium" selected>Средний</option>
-                    <option value="low">Низкий</option>
-                </select>
-                <button id="addBtn">Добавить</button>
-            </div>
-
-            <div style="margin: 10px 0;">
-                <button id="deleteSelectedBtn">Удалить выделенные</button>
-                <button id="sortByDateBtn">Сортировать по дате</button>
-            </div>
-
-            <div class="filter-buttons">
-                <button onclick="filterTasks('all')" class="active" id="filterAll">Все</button>
-                <button onclick="filterTasks('high')" id="filterHigh">Высокий</button>
-                <button onclick="filterTasks('medium')" id="filterMedium">Средний</button>
-                <button onclick="filterTasks('low')" id="filterLow">Низкий</button>
-            </div>
-
-            <div id="todoList"></div>
-        </div>
-
-        <img src="images/vladivostok.jpg" alt="Владивосток" class="todo-image">
+    <div>
+        <input type="text" id="taskInput" placeholder="Что нужно сделать?">
+        <input type="date" id="dateInput">
+        <select id="prioritySelect">
+            <option value="high">Высокий</option>
+            <option value="medium" selected>Средний</option>
+            <option value="low">Низкий</option>
+        </select>
+        <button id="addBtn">Добавить</button>
     </div>
-</main>
 
-<footer>
-    <p style="margin:0;">© 2026 Гид по Владивостоку. Все права защищены.</p>
-    <p style="margin:5px 0 0 0; font-size:12px; opacity:0.8;">
-        Сделано для туристов и гостей города
-    </p>
-</footer>
+    <div id="todoList"></div>
+</main>
 
 <script src="js/todo.js"></script>
 <script>
-    console.log('todo.html загружен!');
+    console.log('✅ todo.html загружен');
 
-    document.getElementById('pushBtn').addEventListener('click', function() {
-        console.log('Кнопка нажата!');
+    document.getElementById('pushBtn').addEventListener('click', function () {
+        console.log('👉 Кнопка нажата!');
 
         if (!('serviceWorker' in navigator)) {
-            alert('Service Worker не поддерживается');
+            alert('❌ Service Worker не поддерживается');
             return;
         }
 
         navigator.serviceWorker.ready
-            .then(function(registration) {
-                console.log('SW готов!', registration);
-                
-                if (!registration.active) {
-                    console.log('SW ещё не активирован, ждём...');
-                    setTimeout(function() {
-                        sendMessage(registration);
-                    }, 1000);
-                    return;
-                }
-                
-                sendMessage(registration);
+            .then(function (reg) {
+                console.log('✅ SW готов');
+
+                reg.active.postMessage({
+                    type: 'showNotification',
+                    title: 'Гид по Владивостоку',
+                    body: 'Пора посетить Золотой мост!',
+                    icon: '/icons/icon-192x192.png',
+                    url: '/sights.html'
+                });
+
+                document.getElementById('pushStatus').innerText = '✅ Уведомление отправлено!';
+                setTimeout(() => {
+                    document.getElementById('pushStatus').innerText = '';
+                }, 3000);
             })
-            .catch(function(err) {
-                console.error('Ошибка:', err);
-                alert('Ошибка: ' + err.message);
+            .catch(function (err) {
+                console.error('❌ Ошибка:', err);
             });
     });
-
-    function sendMessage(registration) {
-        console.log('Отправляем сообщение в SW...');
-        
-        try {
-            registration.active.postMessage({
-                type: 'showNotification',
-                title: 'Гид по Владивостоку',
-                body: 'Пора посетить Золотой мост!',
-                icon: '/icons/icon-192x192.png',
-                url: '/sights.html'
-            });
-            console.log('✅ Сообщение отправлено!');
-            
-            document.getElementById('pushStatus').textContent = 'Уведомление отправлено!';
-            document.getElementById('pushStatus').style.color = 'green';
-            setTimeout(function() {
-                document.getElementById('pushStatus').textContent = '';
-            }, 3000);
-        } catch (e) {
-            console.error('❌ Ошибка отправки:', e);
-        }
-    }
 </script>
 
 </body>
