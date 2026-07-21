@@ -5,11 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Гид по Владивостоку</title>
     
+    <!-- PWA -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#1a5276">
+    
+    <!-- ДЛЯ IPHONE -->
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png">
     
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -57,10 +62,25 @@
 </footer>
 
 <script>
+    // РЕГИСТРАЦИЯ SERVICE WORKER
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js')
-            .then(reg => console.log('SW зарегистрирован!', reg))
-            .catch(err => console.log('Ошибка SW:', err));
+            .then(reg => {
+                console.log('✅ SW зарегистрирован!', reg);
+                console.log('✅ SW status:', reg.active ? 'Active' : 'Not active');
+            })
+            .catch(err => {
+                console.log('❌ Ошибка SW:', err);
+            });
+    } else {
+        console.log('❌ Service Worker не поддерживается');
+    }
+
+    // ПРОВЕРКА PUSH
+    if ('PushManager' in window) {
+        console.log('✅ Push поддерживается');
+    } else {
+        console.log('❌ Push НЕ поддерживается');
     }
 </script>
 
